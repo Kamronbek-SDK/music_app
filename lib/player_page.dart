@@ -214,7 +214,7 @@ class _PlayerPageState extends State<PlayerPage> with SingleTickerProviderStateM
   // _iconRotate(){
   //   return  RotationTransition(
   //     turns: _controller,
-  //     child: const Icon(CupertinoIcons.car, size: 40,),
+  //     child: const Icon(CupertinoIcons.car, size: 40,)
   //   );
   // }
 }
