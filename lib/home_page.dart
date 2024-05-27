@@ -18,8 +18,8 @@ class _HomePageState extends State<HomePage> {
 
   late AudioPlayer _audioPlayer;
 
-  int _currentMusic = 0;
-  int a = -1;
+  int _currentMusic = -1;
+  bool a = false;
 
   @override
   void initState() {
@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
                   });
               setState(() {
                 _currentMusic = index;
-                a = _currentMusic;
+                a = _currentMusic == index;
               });
             },
             title: Text(musics[index].title),
@@ -81,7 +81,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ]
       ),
-      bottomNavigationBar: a == _currentMusic ? BottomAppBar(
+      bottomNavigationBar: a ? BottomAppBar(
         color: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         child: Center(
@@ -99,13 +99,20 @@ class _HomePageState extends State<HomePage> {
                       IconButton(onPressed: (){
                         if(_audioPlayer.state == PlayerState.playing){
                           _audioPlayer.pause();
+                          _audioPlayer.state = PlayerState.paused;
                         }
                         else {
                           _audioPlayer.state = PlayerState.playing;
                           _audioPlayer.play(AssetSource("music/music$_currentMusic.mp3"));
                         }
-                      }, icon: _audioPlayer.state == PlayerState.playing ? const Icon(CupertinoIcons.play) : const Icon(CupertinoIcons.pause)),
-                      IconButton(onPressed: (){}, icon: const Icon(CupertinoIcons.forward_end)),
+                        setState(() {});
+                      }, icon: _audioPlayer.state == PlayerState.playing ? const Icon(CupertinoIcons.pause) : const Icon(CupertinoIcons.play)
+                      ),
+                      IconButton(onPressed: (){
+                        _currentMusic = _currentMusic + 1;
+                        _audioPlayer.play(AssetSource('music/music$_currentMusic.mp3'));
+                        setState(() {});
+                      }, icon: const Icon(CupertinoIcons.forward_end)),
                     ],
                   ),
                 )
