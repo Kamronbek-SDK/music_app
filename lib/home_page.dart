@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -13,11 +14,19 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-int _currentMusic = 0;
-
- int a = -1;
-
 class _HomePageState extends State<HomePage> {
+
+  late AudioPlayer _audioPlayer;
+
+  int _currentMusic = 0;
+  int a = -1;
+
+  @override
+  void initState() {
+    _audioPlayer = AudioPlayer();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,8 +66,8 @@ class _HomePageState extends State<HomePage> {
                   return PlayerPage(music: musics[index],);
                   });
               setState(() {
-                a = _currentMusic;
                 _currentMusic = index;
+                a = _currentMusic;
               });
             },
             title: Text(musics[index].title),
@@ -87,7 +96,15 @@ class _HomePageState extends State<HomePage> {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      IconButton(onPressed: (){}, icon: const Icon(CupertinoIcons.play)),
+                      IconButton(onPressed: (){
+                        if(_audioPlayer.state == PlayerState.playing){
+                          _audioPlayer.pause();
+                        }
+                        else {
+                          _audioPlayer.state = PlayerState.playing;
+                          _audioPlayer.play(AssetSource("music/music$_currentMusic.mp3"));
+                        }
+                      }, icon: _audioPlayer.state == PlayerState.playing ? const Icon(CupertinoIcons.play) : const Icon(CupertinoIcons.pause)),
                       IconButton(onPressed: (){}, icon: const Icon(CupertinoIcons.forward_end)),
                     ],
                   ),

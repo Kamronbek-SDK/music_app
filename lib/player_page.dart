@@ -25,23 +25,23 @@ class _PlayerPageState extends State<PlayerPage> with SingleTickerProviderStateM
 
   Duration maxDuration = const Duration(seconds: 0);
 
-  // findDuration() {
-  //   _audioPlayer.getDuration().then((v) {
-  //     setState(() {
-  //       maxDuration = v ?? const Duration(seconds: 0);
-  //     });
-  //   });
-  // }
+  findDuration() {
+    _audioPlayer.getDuration().then((v) {
+      setState(() {
+        maxDuration = v ?? const Duration(seconds: 0);
+      });
+    });
+  }
 
   @override
   void initState() {
+    _currentMusic = int.parse(widget.music.image);
     _audioPlayer = AudioPlayer();
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 1)
     )
     ..repeat();
-    maxDuration = _audioPlayer.getDuration() as Duration;
     super.initState();
   }
 
@@ -54,6 +54,7 @@ class _PlayerPageState extends State<PlayerPage> with SingleTickerProviderStateM
   
   @override
   Widget build(BuildContext context) {
+    print(_currentMusic);
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
@@ -124,14 +125,14 @@ class _PlayerPageState extends State<PlayerPage> with SingleTickerProviderStateM
                     ),
                     child: ClipRRect(
                         borderRadius: BorderRadius.circular(15),
-                        child: Image.asset('assets/img/img${widget.music.image}.jpg', fit: BoxFit.fill,)
+                        child: Image.asset('assets/img/img$_currentMusic.jpg', fit: BoxFit.fill,)
                     ),
                   ),
                 ),
               ),
               const Gap(25),
-              Text(widget.music.title, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),),
-              Text(widget.music.author, style: const TextStyle(color: Colors.grey, fontSize: 18),),
+              Text(musics[_currentMusic].title, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),),
+              Text(musics[_currentMusic].author, style: const TextStyle(color: Colors.grey, fontSize: 18),),
               const Gap(50),
                StreamBuilder(stream: _audioPlayer.onPositionChanged,
                    builder: (context, snapshot) => Padding(
@@ -157,13 +158,16 @@ class _PlayerPageState extends State<PlayerPage> with SingleTickerProviderStateM
                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                  children: [
                    IconButton(onPressed: (){
+                     _audioPlayer.state = PlayerState.playing;
                      if(_currentMusic > 0) {
-                       setState(() {
-                         _currentMusic--;
-                       });
+                       _currentMusic = _currentMusic -1;
                        _audioPlayer.stop();
-                       _audioPlayer.play(AssetSource('music/music${widget.music.image}.mp3'));
+                       _audioPlayer.play(AssetSource('music/music$_currentMusic.mp3'));
+                       setState(() {});
+                       print(_currentMusic);
                      }
+                     setState(() {});
+                     print(_currentMusic);
                    }, icon: const Icon(CupertinoIcons.backward_end),
                    ),
                    Stack(
@@ -178,11 +182,11 @@ class _PlayerPageState extends State<PlayerPage> with SingleTickerProviderStateM
                       )
                       ),
                        IconButton(onPressed: () async {
-                         if(_audioPlayer.state == PlayerState.playing){
+                         if(_audioPlayer.state == PlayerState.playing) {
                            await _audioPlayer.pause();
                          }
                          else {
-                           await _audioPlayer.play(AssetSource('music/music${widget.music.image}.mp3'));
+                            await _audioPlayer.play(AssetSource('music/music$_currentMusic.mp3'));
                          }
                          setState(() {});
                        }, icon: _audioPlayer.state == PlayerState.playing ? const Icon(CupertinoIcons.pause) : const Icon(CupertinoIcons.play),
@@ -190,17 +194,16 @@ class _PlayerPageState extends State<PlayerPage> with SingleTickerProviderStateM
                      ]
                    ),
                    IconButton(onPressed: (){
+                     _audioPlayer.state = PlayerState.playing;
                      if(_currentMusic < musics.length - 1) {
-                       setState(() {
-                         _currentMusic++;
-                       });
+                       _currentMusic = _currentMusic + 1;
+                       print(_currentMusic);
                        _audioPlayer.stop();
-                       _audioPlayer.play(AssetSource('music/music${widget.music.image}.mp3'));
+                       _audioPlayer.play(AssetSource('music/music$_currentMusic.mp3'));
                      } else {
-                       setState(() {
-                         _currentMusic = 0;
-                       });
+                       _currentMusic = 0;
                      }
+                     setState(() {});
                    }, icon: const Icon(CupertinoIcons.forward_end)),
                  ],
                ),
