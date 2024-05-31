@@ -6,6 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:lottie/lottie.dart';
 import 'package:music_app/class.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:music_app/player.dart';
 //import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class PlayerPage extends StatefulWidget {
@@ -25,13 +26,13 @@ class _PlayerPageState extends State<PlayerPage> with SingleTickerProviderStateM
 
   Duration maxDuration = const Duration(seconds: 0);
 
-  findDuration() {
-    _audioPlayer.getDuration().then((v) {
-      setState(() {
-        maxDuration = v ?? const Duration(seconds: 0);
-      });
+  getDuration() {
+    Player.audioPlayer?.getDuration().then((value) {
+      maxDuration = value ?? const Duration(seconds: 0);
+      setState(() {});
     });
   }
+
 
   @override
   void initState() {
