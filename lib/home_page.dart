@@ -60,6 +60,10 @@ class _HomePageState extends State<HomePage> {
           separatorBuilder: (context, index) => const Divider(),
           itemBuilder: (context, index) => ListTile(
             onTap: (){
+              if(_audioPlayer.state == PlayerState.playing){
+                _audioPlayer.stop();
+                _audioPlayer.state = PlayerState.stopped;
+              }
               showModalBottomSheet(context: context,
                   isScrollControlled: true,
                   builder: (context){
@@ -109,7 +113,9 @@ class _HomePageState extends State<HomePage> {
                       }, icon: _audioPlayer.state == PlayerState.playing ? const Icon(CupertinoIcons.pause) : const Icon(CupertinoIcons.play)
                       ),
                       IconButton(onPressed: (){
-                        _currentMusic = _currentMusic + 1;
+                        print(_currentMusic);
+                        _audioPlayer.state = PlayerState.playing;
+                          _currentMusic = _currentMusic == musics.length -1 ? 0 : _currentMusic + 1;
                         _audioPlayer.play(AssetSource('music/music$_currentMusic.mp3'));
                         setState(() {});
                       }, icon: const Icon(CupertinoIcons.forward_end)),
